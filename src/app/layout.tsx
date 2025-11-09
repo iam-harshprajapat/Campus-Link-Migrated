@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Geist, Geist_Mono } from 'next/font/google'
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
+const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
 
 export const metadata: Metadata = {
   title: "Campus Link",
@@ -13,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-950 text-white font-sans">{children}</body>
+      <body className={`${geist.variable} ${geistMono.variable} font-sans`}>{children}</body>
     </html>
   );
 }
