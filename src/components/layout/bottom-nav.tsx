@@ -21,8 +21,12 @@ export default function BottomNav() {
           return (
             <button 
             onClick={()=>{setActiveId(item.id)}}
-            key={item.id} className={`size-14 flex justify-center items-center rounded-full ${isActive?"-translate-y-6 text-white scale-125 ease-in-out duration-300 bg-primary":""}`}>
-              <item.icon size={30} />
+            key={item.id} className={`size-12 flex justify-center gap-1 items-center text-muted-foreground rounded-full flex-col ${isActive?"-translate-y-6 text-white scale-125 transition-all ease-in-out duration-300 bg-primary":""}`}>
+              <item.icon size={24} />
+              {
+                item.id!=activeId &&
+              <label htmlFor={item.label} className="text-xs">{item.label}</label>
+              }
             </button>
           )
         })
