@@ -4,8 +4,8 @@ export default function Home() {
       <img src="/favicon.ico" alt="Campus Link" className="hover:scale-160 hover:rotate-360 duration-400" />
       <h1 className="text-5xl font-extrabold mb-4 mt-2">Campus Link</h1>
       <p className="text-lg text-gray-400 max-w-xl">
-        Migrating from <span className="font-semibold text-white">React.js</span> 
-        to <span className="font-semibold text-white">Next.js</span>.  </p>
+        Migrating from <span className="font-semibold text-black">React.js </span> 
+        to <span className="font-semibold text-black">Next.js</span>.  </p>
        <p>
 
         You can still visit the old version here {" "}
