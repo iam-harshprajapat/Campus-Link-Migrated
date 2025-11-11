@@ -1,7 +1,8 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { getAllPosts } from "@/lib/api";
-import Post from "@/components/feed/post"
+import Post from "@/components/feed/post";
+import PostSkeleton from "./postSkeleton";
 
 export default function Feed() {
   const [posts, setPosts] = useState<any[]>([]);
@@ -26,29 +27,25 @@ export default function Feed() {
     fetchPosts();
   }, []);
 
-  if (loading) return <p className="text-center mt-10">Loading posts...</p>;
-
-  if (posts.length === 0) {
-    return <p className="text-center mt-10 text-muted-foreground">No posts to display</p>;
-  }
-
   return (
     <div className="flex-1 overflow-y-auto h-auto">
       <div className="flex justify-center">
         <div className="w-full max-w-2xl px-4 py-6 mt-4">
-          {posts.map((post) => (
-            <Post 
-              key={post._id}
-              _id={post._id}
-              user={post.user}
-              createdAt={post.createdAt}
-              image={post.image}
-              caption={post.caption || ""}
-              likes={post.likes}
-            />
-          ))}
+          {loading
+            ? Array.from({ length: 4 }).map((_, i) => <PostSkeleton key={i} />)
+            : posts.map((post) => (
+                <Post
+                  key={post._id}
+                  _id={post._id}
+                  user={post.user}
+                  createdAt={post.createdAt}
+                  image={post.image}
+                  caption={post.caption || ""}
+                  likes={post.likes}
+                />
+              ))}
         </div>
       </div>
     </div>
-  )
+  );
 }
