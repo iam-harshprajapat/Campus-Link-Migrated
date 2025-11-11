@@ -14,7 +14,7 @@ export default function BottomNav() {
   const [activeId, setActiveId] = useState("home")
 
   return (
-    <nav className="bg-white h-16 w-full fixed bottom-0 flex justify-evenly items-center">
+    <nav className="bg-white h-16 w-full fixed bottom-0 flex justify-evenly items-center md:hidden">
       {
         navItems.map((item) => {
           const isActive = activeId === item.id
