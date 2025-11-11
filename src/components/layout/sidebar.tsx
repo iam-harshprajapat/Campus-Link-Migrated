@@ -14,7 +14,7 @@ export default function Sidebar() {
   return (
     <aside className="hidden md:flex fixed left-0 top-0 h-screen w-64 flex-col border-r border-border bg-sidebar p-6">
       {/* Logo */}
-      <div className="flex items-center gap-3 mt-2">
+      <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground font-bold">
           CL
         </div>
