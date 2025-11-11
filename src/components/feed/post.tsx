@@ -64,7 +64,7 @@ export default function Post({
   };
 
   return (
-    <article className="border-b border-border pb-6 mb-6 transition-all hover:bg-muted/30 -mx-4 px-4 py-4 rounded-lg">
+    <article className="border-b border-border pb-6 mb-6 transition-all bg-zinc-100 hover:bg-muted/30 -mx-4 px-4 py-4 rounded-lg">
       {/* Post Header */}
       <div className="flex items-center gap-3 mb-4">
         <Avatar className="h-12 w-12">
