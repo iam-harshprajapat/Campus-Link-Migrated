@@ -66,7 +66,9 @@ export default function Navbar() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <div className="flex items-center gap-3 px-2 py-2">
+              <a 
+              href={'/profile'}
+              className="flex items-center gap-3 px-2 py-2">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src="/diverse-student-profiles.png" />
                   <AvatarFallback>SU</AvatarFallback>
@@ -75,7 +77,7 @@ export default function Navbar() {
                   <p className="font-semibold text-sm text-foreground">Sarah University</p>
                   <p className="text-xs text-muted-foreground">@sarahuniv</p>
                 </div>
-              </div>
+              </a>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
