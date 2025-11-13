@@ -3,19 +3,21 @@
 import { useState } from "react"
 import { BookOpen, Search, Home, Users, Zap } from "lucide-react"
 import SearchModal from "./search-modal"
+import { useRouter } from "next/navigation"
 
 const navItems = [
-  { icon: BookOpen, label: "Notes", id: "notes" },
-  { icon: Search, label: "Search", id: "search" },
-  { icon: Home, label: "Home", id: "home" },
-  { icon: Users, label: "Connect", id: "connect" },
-  { icon: Zap, label: "Updates", id: "updates" },
+  { icon: BookOpen, label: "Notes", id: "notes" , href:"#"},
+  { icon: Search, label: "Search", id: "search", href:"#" },
+  { icon: Home, label: "Home", id: "home", href:"/feed" },
+  { icon: Users, label: "Connect", id: "connect", href:"#" },
+  { icon: Zap, label: "Updates", id: "updates", href:"#" },
 ]
 export default function BottomNav() {
+  const router = useRouter()
   const [activeId, setActiveId] = useState("home")
   const [searchOpen, setSearchOpen] = useState(false)
 
-  const handleNavClick = (id: string) => {
+  const handleNavClick = (id: string,href: string) => {
 
     if (id != "search") setActiveId(id);
 
@@ -24,6 +26,7 @@ export default function BottomNav() {
     } else {
       setActiveId(id)
     }
+    router.push(href);
   }
 
   return (
@@ -34,7 +37,7 @@ export default function BottomNav() {
             const isActive = activeId === item.id
             return (
               <button
-                onClick={() => handleNavClick(item.id)}
+                onClick={() => handleNavClick(item.id,item.href)}
                 key={item.id} className={`size-12 flex justify-center gap-1 items-center text-muted-foreground rounded-full flex-col ${isActive ? "text-white scale-125 transition-all ease-in-out duration-300 bg-primary" : ""}`}>
                 <item.icon size={24} />
                 {

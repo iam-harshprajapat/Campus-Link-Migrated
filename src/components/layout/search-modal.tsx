@@ -81,7 +81,6 @@ useEffect(() => {
               placeholder="Search posts, people..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              autoFocus
               className="flex-1 bg-transparent text-foreground outline-none placeholder:text-muted-foreground"
             />
           </div>
