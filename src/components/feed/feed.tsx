@@ -30,7 +30,7 @@ export default function Feed() {
   return (
     <div className="flex-1 overflow-y-auto h-auto">
       <div className="flex justify-center">
-        <div className="w-full max-w-2xl px-4 py-6 mt-4">
+        <div className="w-full max-w-2xl px-4 py-6">
           {loading
             ? Array.from({ length: 4 }).map((_, i) => <PostSkeleton key={i} />)
             : posts.map((post) => (
