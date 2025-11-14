@@ -10,19 +10,18 @@ export default function Home() {
   return (
     <div className="flex h-screen bg-background">
       <div className="hidden md:block">
-        <Sidebar/>
+        <Sidebar />
       </div>
 
       {/* Main Content */}
       <div className="flex flex-1 flex-col">
-        <Navbar/>
+        <Navbar />
 
         {/* Feed with padding for mobile bottom nav */}
         <div className="md:pb-0 pb-20">
           <Feed />
         </div>
       </div>
-
       <BottomNav />
     </div>
   )
