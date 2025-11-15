@@ -5,7 +5,7 @@ import { Home, User, BookOpen, Users, Zap } from "lucide-react"
 const menuItems = [
   { icon: Home, label: "Home", href: "/feed" },
   { icon: User, label: "Profile", href: "/profile" },
-  { icon: BookOpen, label: "Notes", href: "#" },
+  { icon: BookOpen, label: "Notes", href: "/notes" },
   { icon: Users, label: "Connect", href: "#" },
   { icon: Zap, label: "Updates", href: "#" },
 ]

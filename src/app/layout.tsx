@@ -3,6 +3,7 @@ import "./globals.css";
 import { Geist, Geist_Mono } from 'next/font/google'
 import { AuthProvider } from "@/context/authContext";
 import NotificationProvider from "@/components/shared/notification/notificationProvider";
+import BottomNav from "@/components/layout/bottom-nav";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
@@ -23,7 +24,7 @@ export default function RootLayout({
         <NotificationProvider>
           <AuthProvider>{children}</AuthProvider>
         </NotificationProvider>
-        </body>
+      </body>
     </html>
   );
 }

@@ -17,6 +17,5 @@ export async function loginUser(credentials: { email: string; password: string }
     return res.json();
   } catch (error) {
     console.error("Login error:", error);
-    throw error;
   }
 }
