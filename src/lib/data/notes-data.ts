@@ -6,7 +6,7 @@ export interface Note {
   subject: string
   fileUrl: string
   title: string
-  fileType: "pdf" | "docx" | "ppt" | "jpg" | "png" | "jpeg"
+  fileType: "pdf" | "docx" | "ppt" | "jpg" | "png" | "jpeg" |"xls"
   uploadedBy: {
     name: string
   }
@@ -21,9 +21,9 @@ export const dummyNotes: Note[] = [
     course: "B.Tech",
     semester: "Sem 1",
     subject: "Mathematics",
-    fileUrl: "https://example.com/math-notes.pdf",
+    fileUrl: "https://res.cloudinary.com/driqu2cgm/raw/upload/v1763238907/MonthlyTimesheet1753503594632_xnyyti.xls",
     title: "Calculus Fundamentals",
-    fileType: "pdf",
+    fileType: "xls",
     uploadedBy: { name: "Prof. John Doe" },
     createdAt: "2025-11-01",
     uploadedAt: "2025-11-01",
@@ -34,7 +34,7 @@ export const dummyNotes: Note[] = [
     course: "B.Tech",
     semester: "Sem 1",
     subject: "Mathematics",
-    fileUrl: "https://example.com/algebra.docx",
+    fileUrl: "https://res.cloudinary.com/driqu2cgm/raw/upload/v1763238907/Fortnightly_Report_1-1_1_gvlfzn.docx",
     title: "Linear Algebra Notes",
     fileType: "docx",
     uploadedBy: { name: "Dr. Jane Smith" },
@@ -60,7 +60,7 @@ export const dummyNotes: Note[] = [
     course: "B.Tech",
     semester: "Sem 3",
     subject: "Data Structures",
-    fileUrl: "https://example.com/dsa.ppt",
+    fileUrl: "https://res.cloudinary.com/driqu2cgm/raw/upload/v1763238908/presentation_wzgjx9.ppt",
     title: "Trees and Graphs",
     fileType: "ppt",
     uploadedBy: { name: "Prof. Alice Johnson" },
@@ -73,7 +73,7 @@ export const dummyNotes: Note[] = [
     course: "B.Tech",
     semester: "Sem 3",
     subject: "Database Systems",
-    fileUrl: "https://example.com/db.pdf",
+    fileUrl: "https://res.cloudinary.com/driqu2cgm/image/upload/CertificateOfCompletion_Learning_Java_2018_i3aryn.pdf",
     title: "SQL Queries & Indexing",
     fileType: "pdf",
     uploadedBy: { name: "Dr. Michael Chen" },

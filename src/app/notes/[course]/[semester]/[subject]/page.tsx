@@ -13,17 +13,18 @@ export default function SubjectPage() {
     const semester = decodeURIComponent(params.semester as string);
     const subject = decodeURIComponent(params.subject as string);
     return (
-        <div className="flex h-screen bg-background">
+        <div className="w-full h-screen bg-background">
             <Sidebar />
             <div className="md:block hidden">
                 <Navbar />
             </div>
-
-            <SubjectView
-                course={decodeURIComponent(course)}
-                semester={decodeURIComponent(semester)}
-                subject={decodeURIComponent(subject)}
-            />
+            <div className="md:ml-64">
+                <SubjectView
+                    course={decodeURIComponent(course)}
+                    semester={decodeURIComponent(semester)}
+                    subject={decodeURIComponent(subject)}
+                />
+            </div>
             <BottomNav />
         </div>
     )

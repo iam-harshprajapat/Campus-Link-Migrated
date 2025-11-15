@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Download, RefreshCw, ChevronLeft, File, FileText, Image } from 'lucide-react'
 import { getFilesBySubject } from "@/lib/data/notes-data"
 import { Button } from "@/components/ui/button"
+import { FaFilePdf, FaFilePowerpoint, FaFileWord } from 'react-icons/fa';
 import {
     Select,
     SelectContent,
@@ -13,6 +14,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import NoteBreadcrumb from "./note-breadcrumb"
+import { motion } from 'framer-motion';
+import { appear } from "@/lib/animations"
 
 interface SubjectViewProps {
     course: string
@@ -58,11 +61,11 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
     const getFileIcon = (fileType: string) => {
         switch (fileType) {
             case "pdf":
-                return <FileText size={20} className="text-red-500" />
+                return <FaFilePdf size={20} className="text-red-500" />
             case "docx":
-                return <FileText size={20} className="text-blue-500" />
+                return <FaFileWord size={20} className="text-blue-500" />
             case "ppt":
-                return <FileText size={20} className="text-orange-500" />
+                return <FaFilePowerpoint size={20} className="text-orange-500" />
             case "jpg":
             case "png":
             case "jpeg":
@@ -91,7 +94,8 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
     }
 
     return (
-        <div className="flex flex-1 flex-col">
+        <div
+            className="flex flex-1 flex-col">
             {/* Header */}
             <div className="border-b border-border bg-card">
                 <div className="flex items-center justify-between px-6 py-4">
@@ -145,7 +149,11 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <motion.div variants={appear}
+                exit="exit"
+                animate="visible"
+                initial="hidden"
+                className="flex-1 overflow-y-auto p-6">
                 {sortedFiles.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                         <File size={48} className="mb-4 text-muted-foreground" />
@@ -188,7 +196,7 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
                         ))}
                     </div>
                 )}
-            </div>
+            </motion.div>
         </div>
     )
 }

@@ -4,6 +4,9 @@ import Link from "next/link"
 import { BookOpen, RefreshCw } from 'lucide-react'
 import { getCourses } from "@/lib/data/notes-data"
 import { Button } from "@/components/ui/button"
+import { motion } from 'framer-motion';
+import { appear, fade_bottom, staggerParent } from "@/lib/animations"
+import { useEffect } from "react"
 
 export default function NotesView() {
     const courses = getCourses()
@@ -12,9 +15,14 @@ export default function NotesView() {
         window.location.reload()
     }
 
+
     return (
-        <div className="flex flex-1 flex-col md:animation-none animate-slide-in"
-        >
+        <motion.div
+            variants={appear}
+            exit="exit"
+            animate="visible"
+            initial="hidden"
+            className="flex flex-1 flex-col">
             {/* Header */}
             <div className="border-b border-border bg-card">
                 <div className="flex items-center justify-between px-6 py-4">
@@ -39,24 +47,35 @@ export default function NotesView() {
                 ) : (
                     <div className="space-y-3">
                         <p className="text-sm font-semibold text-muted-foreground mb-4">SELECT A COURSE</p>
-                        {courses.map((course) => (
-                            <Link
-                                key={course}
-                                href={`/notes/${encodeURIComponent(course)}`}
-                                className="flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:bg-secondary hover:border-primary cursor-pointer"
-                            >
-                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                                    <BookOpen size={24} className="text-primary" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-semibold text-foreground">{course}</p>
-                                    <p className="text-sm text-muted-foreground">Click to view semesters</p>
-                                </div>
-                            </Link>
-                        ))}
+                        <motion.div variants={staggerParent}
+                            initial="hidden"
+                            animate="visible"
+                            className="grid gap-4">
+
+                            {courses.map((course) => (
+                                <Link
+                                    key={course}
+                                    href={`/notes/${encodeURIComponent(course)}`}
+                                >
+                                    <motion.div
+                                        variants={fade_bottom}
+                                        className="flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:bg-secondary hover:border-primary cursor-pointer"
+                                    >
+
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                                            <BookOpen size={24} className="text-primary" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-semibold text-foreground">{course}</p>
+                                            <p className="text-sm text-muted-foreground">Click to view semesters</p>
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            ))}
+                        </motion.div>
                     </div>
                 )}
             </div>
-        </div>
+        </motion.div>
     )
 }

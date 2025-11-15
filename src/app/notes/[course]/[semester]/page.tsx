@@ -10,13 +10,15 @@ export default function SemesterPage() {
     const course = decodeURIComponent(params.course as string)
     const semester = decodeURIComponent(params.semester as string)
     return (
-        <div className="flex h-screen bg-background">
+        <div className="w-full h-screen bg-background">
             <Sidebar />
 
             <div className="md:block hidden">
                 <Navbar />
             </div>
-            <SemesterView course={course} semester={decodeURIComponent(semester)} />
+            <div className="md:ml-64">
+                <SemesterView course={course} semester={decodeURIComponent(semester)} />
+            </div>
             <BottomNav />
         </div>
     )

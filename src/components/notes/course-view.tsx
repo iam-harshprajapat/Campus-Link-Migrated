@@ -6,6 +6,8 @@ import { BookOpen, ChevronRight, RefreshCw, ChevronLeft } from 'lucide-react'
 import { getSemestersByCourse } from "@/lib/data/notes-data"
 import { Button } from "@/components/ui/button"
 import NoteBreadcrumb from "./note-breadcrumb"
+import { motion } from 'framer-motion';
+import { appear } from "@/lib/animations"
 
 interface CourseViewProps {
     course: string
@@ -20,7 +22,7 @@ export default function CourseView({ course }: CourseViewProps) {
     }
 
     return (
-        <div className="flex flex-1 flex-col">
+        <div className="flex-1 flex flex-col">
             {/* Header */}
             <div className="border-b border-border bg-card">
                 <div className="flex items-center justify-between px-6 py-4">
@@ -40,7 +42,12 @@ export default function CourseView({ course }: CourseViewProps) {
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <motion.div
+                variants={appear}
+                exit="exit"
+                animate="visible"
+                initial="hidden"
+                className="flex-1 overflow-y-auto p-6">
                 {semesters.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
                         <BookOpen size={48} className="mb-4 text-muted-foreground" />
@@ -70,7 +77,7 @@ export default function CourseView({ course }: CourseViewProps) {
                         ))}
                     </div>
                 )}
-            </div>
+            </motion.div>
         </div>
     )
 }
