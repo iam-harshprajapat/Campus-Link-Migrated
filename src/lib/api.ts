@@ -10,8 +10,8 @@ export async function getAllPosts() {
         "Content-Type": "application/json"
       },
       cache: "no-store",
-
-    });
+    }
+  );
 
     if (!res.ok) {
       throw new Error(`Failed to fetch posts: ${res.statusText}`);
