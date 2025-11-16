@@ -5,6 +5,11 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { motion, AnimatePresence } from 'framer-motion'
+import { mapMimeToType } from '@/utils/helpers/fileType'
+import { uploadToCloudinary } from '@/utils/config/cloudinary'
+import { useLoader } from '@/context/loaderProvider'
+import { useNotification } from '../shared/notification/notificationProvider'
+import { formatBytes } from '@/utils/helpers/formatBytes'
 
 interface UploadModalProps {
     isOpen: boolean
@@ -13,6 +18,7 @@ interface UploadModalProps {
     semester?: string
     subject?: string
     level: 'courses' | 'semesters' | 'subjects' | 'files'
+
 }
 
 interface FormData {
@@ -21,6 +27,9 @@ interface FormData {
     subjectName: string
     notesTitle: string
     file: File | null
+    fileUrl?: string
+    fileType?: 'pdf' | 'ppt' | 'docx' | 'xls' | 'jpg' | 'png' | 'jpeg' | string
+    fileSize?: number // bytes
 }
 
 export default function UploadModal({
@@ -37,11 +46,16 @@ export default function UploadModal({
         subjectName: '',
         notesTitle: '',
         file: null,
+        fileUrl: undefined,
+        fileType: undefined,
+        fileSize: undefined,
     })
 
     const [showWarning, setShowWarning] = useState(false)
     const [isClosing, setIsClosing] = useState(false)
     const [isMobile, setIsMobile] = useState<boolean>(false)
+    const { showLoader, hideLoader, updateProgress } = useLoader();
+    const { showNotification } = useNotification();
 
     // detect mobile (<= 768px)
     useEffect(() => {
@@ -145,6 +159,9 @@ export default function UploadModal({
                 subjectName: '',
                 notesTitle: '',
                 file: null,
+                fileUrl: undefined,
+                fileType: undefined,
+                fileSize: undefined,
             })
             setIsClosing(false)
             setShowWarning(false)
@@ -162,16 +179,74 @@ export default function UploadModal({
         })
     }
 
-    const handleUpload = async () => {
-        if (!formData.file) {
-            alert('Please select a file')
-            return
+    useEffect(() => {
+        if (isOpen) {
+            setFormData(prev => ({
+                ...prev,
+                courseName: course ?? prev.courseName,
+                semesterName: semester ?? prev.semesterName,
+                subjectName: subject ?? prev.subjectName,
+            }))
         }
+    }, [isOpen, course, semester, subject])
 
-        // API integration will be handled here
-        console.log('Upload:', formData)
-        handleActualClose()
-    }
+
+    const handleUpload = async () => {
+        try {
+            // Start global loader
+            showLoader("Uploading file...");
+
+            if (!formData.file) {
+                hideLoader();
+                showNotification("Please select a file", "error");
+                return;
+            }
+
+            // Track progress
+            let lastPct = 0;
+
+            const res = await uploadToCloudinary(formData.file, (pct) => {
+                if (pct !== lastPct) {
+                    lastPct = pct;
+                    updateProgress(pct);     // <-- your global loader progress
+                }
+            });
+
+            // Extract file info
+            const localFileSize = formData.file.size;
+            const cloudBytes = res.bytes;
+            const mime = formData.file.type;
+            const fileType = mapMimeToType(mime);
+
+            const payload = {
+                course: formData.courseName,
+                semester: formData.semesterName,
+                subject: formData.subjectName,
+                title: formData.notesTitle,
+                fileUrl: res.secure_url,
+                fileType,
+                fileSize: formatBytes(cloudBytes ?? localFileSize),
+            };
+
+            console.log("Final payload:", payload);
+
+            // Send to server
+            // await fetch("/api/notes", {
+            //   method: "POST",
+            //   body: JSON.stringify(payload),
+            //   headers: { "Content-Type": "application/json" },
+            // });
+
+            showNotification("Notes uploaded successfully!", "success");
+            hideLoader();
+            handleActualClose();
+        } catch (err: any) {
+            hideLoader();
+            showNotification(err?.message || "Upload failed", "error");
+        }
+    };
+
+
 
     const handleInputChange = (field: string, value: string) => {
         setFormData((prev) => ({
