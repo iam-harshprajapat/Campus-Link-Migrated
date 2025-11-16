@@ -30,11 +30,11 @@ function formatDate(dateString: string): string {
   if (diffInDays < 7) return `${diffInDays}d ago`;
   if (diffInWeeks < 4) return `${diffInWeeks}w ago`;
   if (diffInMonths < 12) return `${diffInMonths}mo ago`;
-  
-  return date.toLocaleDateString("en-US", { 
-    month: "short", 
-    day: "numeric", 
-    year: "numeric" 
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
   });
 }
 
@@ -68,7 +68,7 @@ export default function Post({
       {/* Post Header */}
       <div className="flex items-center gap-3 mb-4">
         <Avatar className="h-12 w-12">
-          <AvatarImage src={"/placeholder.svg"} alt={user} />
+          <AvatarImage src={"#"} alt={user} />
           <AvatarFallback>{user?.[0]?.toUpperCase() || "U"}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -132,9 +132,8 @@ export default function Post({
           >
             <Heart
               size={18}
-              className={`transition-all ${
-                liked ? "fill-primary text-primary" : "group-hover:fill-primary/20"
-              }`}
+              className={`transition-all ${liked ? "fill-primary text-primary" : "group-hover:fill-primary/20"
+                }`}
             />
             <span className="text-sm font-medium">Like</span>
           </button>
