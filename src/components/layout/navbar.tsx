@@ -19,7 +19,7 @@ export default function Navbar() {
   const [searchFocused, setSearchFocused] = useState(false)
 
   return (
-    <nav className="md:sticky mobile:static top-0 z-50 border-b border-border bg-card shadow-sm">
+    <nav className="md:sticky mobile:static top-0 z-10 border-b border-border bg-card shadow-sm">
       <div className="flex h-16 items-center justify-between px-2">
         {/* Left: Menu Button & Logo */}
         <div className="flex gap-1 items-center">
@@ -29,9 +29,8 @@ export default function Navbar() {
 
         {/* Center: Search Bar */}
         <div
-          className={`hidden items-center gap-2 rounded-full border transition-all lg:flex ${
-            searchFocused ? "border-primary bg-background" : "border-border bg-muted hover:bg-secondary"
-          } px-4 py-2`}
+          className={`hidden items-center gap-2 rounded-full border transition-all lg:flex ${searchFocused ? "border-primary bg-background" : "border-border bg-muted hover:bg-secondary"
+            } px-4 py-2`}
         >
           <Search size={18} className="text-muted-foreground" />
           <input
@@ -59,16 +58,16 @@ export default function Navbar() {
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 rounded-full hover:bg-secondary transition-colors p-1">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/student-profile.png" />
+                  <AvatarImage src="#" />
                   <AvatarFallback>SU</AvatarFallback>
                 </Avatar>
                 <ChevronDown size={16} className="text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              <a 
-              href={'/profile'}
-              className="flex items-center gap-3 px-2 py-2">
+              <a
+                href={'/profile'}
+                className="flex items-center gap-3 px-2 py-2">
                 <Avatar className="h-10 w-10">
                   <AvatarImage src="/diverse-student-profiles.png" />
                   <AvatarFallback>SU</AvatarFallback>

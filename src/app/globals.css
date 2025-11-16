@@ -161,3 +161,69 @@
     animation: slide-out-left 0.3s ease-out forwards;
   }
 }
+
+:root {
+  --scrollbar-size: 10px;
+  --scrollbar-track: transparent;
+  /* track background */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.25);
+  /* default thumb */
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.35);
+  /* hover thumb */
+  --scrollbar-radius: 999px;
+  /* pill shape */
+}
+
+/* Apply to any container */
+.minimal-scroll {
+  /* For Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+.minimal-scroll::-webkit-scrollbar {
+  width: var(--scrollbar-size);
+  height: var(--scrollbar-size);
+}
+
+.minimal-scroll::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: var(--scrollbar-radius);
+}
+
+.minimal-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--scrollbar-thumb), var(--scrollbar-thumb));
+  border-radius: var(--scrollbar-radius);
+  min-height: 24px;
+  /* keeps drag handle usable on short content */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 2px solid transparent;
+  /* creates breathing space when overlayed on content */
+  background-clip: padding-box;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+/* Hover & active states */
+.minimal-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  transform: scale(1.03);
+}
+
+.minimal-scroll::-webkit-scrollbar-thumb:active {
+  transform: scale(0.98);
+}
+
+.minimal-scroll::-webkit-scrollbar-button,
+.minimal-scroll::-webkit-scrollbar-button:start:decrement,
+.minimal-scroll::-webkit-scrollbar-button:end:increment,
+.minimal-scroll::-webkit-scrollbar-button:horizontal:start:decrement,
+.minimal-scroll::-webkit-scrollbar-button:horizontal:end:increment {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Accessibility notice (do not remove): 
+   Ensure sufficient contrast for users who rely on visible scrollbars. */
