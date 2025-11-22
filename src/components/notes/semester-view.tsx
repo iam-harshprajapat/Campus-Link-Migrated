@@ -3,13 +3,14 @@
 import Link from "next/link"
 import { useRouter } from 'next/navigation'
 import { BookOpen, ChevronRight, RefreshCw, ChevronLeft, FileUp } from 'lucide-react'
-import { getSubjectsBySemester } from "@/lib/data/notes-data"
 import { Button } from "@/components/ui/button"
 import NoteBreadcrumb from "./note-breadcrumb"
-import { motion } from 'framer-motion';
+import { motion } from 'framer-motion'
 import { appear } from "@/lib/animations"
 import { useState } from "react"
 import UploadModal from "./upload-modal"
+import { useSubjects } from "@/hooks/notes/useSubjects"
+import NoteSkeleton from "../skeletons/notes/noteSkeleton"
 
 interface SemesterViewProps {
     course: string
@@ -19,15 +20,20 @@ interface SemesterViewProps {
 export default function SemesterView({ course, semester }: SemesterViewProps) {
     const [showUploadModal, setShowUploadModal] = useState(false)
     const router = useRouter()
-    const subjects = getSubjectsBySemester(course, semester)
+
+    const { data: subjects, isLoading } = useSubjects(course, semester)
 
     const handleRefresh = () => {
         window.location.reload()
     }
 
+    // ⭐ Fix: always a valid array
+    const list: string[] = subjects ?? [];
+
     return (
         <>
             <div className="flex flex-1 flex-col">
+
                 {/* Header */}
                 <div className="border-b border-border bg-card">
                     <div className="flex items-center justify-between px-6 py-4">
@@ -37,13 +43,17 @@ export default function SemesterView({ course, semester }: SemesterViewProps) {
                             </Button>
                             <h1 className="text-2xl font-bold text-foreground">{semester}</h1>
                         </div>
-                        <div className="flex items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
                             <button
                                 onClick={() => setShowUploadModal(true)}
-                                className="text-primary hover:bg-primary hover:text-white p-1 cursor-pointer rounded-sm flex items-center">
+                                className="text-primary hover:bg-primary hover:text-white p-1 rounded-sm"
+                            >
                                 <FileUp size={20} />
                             </button>
-                            <button onClick={handleRefresh} className="text-primary hover:bg-primary hover:text-white p-1 cursor-pointer rounded-sm flex items-center">
+                            <button
+                                onClick={handleRefresh}
+                                className="text-primary hover:bg-primary hover:text-white p-1 rounded-sm"
+                            >
                                 <RefreshCw size={20} />
                             </button>
                         </div>
@@ -65,17 +75,26 @@ export default function SemesterView({ course, semester }: SemesterViewProps) {
                     exit="exit"
                     animate="visible"
                     initial="hidden"
-                    className="flex-1 overflow-y-auto p-6">
-                    {subjects.length === 0 ? (
+                    className="flex-1 overflow-y-auto p-6"
+                >
+                    {isLoading ? (
+                        // 🔥 Loading Skeleton
+                        Array.from({ length: 4 }).map((_, i) => <NoteSkeleton key={i} />)
+
+                    ) : list.length === 0 ? (
+                        // 🔥 Empty State
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <BookOpen size={48} className="mb-4 text-muted-foreground" />
                             <p className="text-lg font-semibold text-foreground">No Files Found</p>
                             <p className="text-sm text-muted-foreground">No subjects available in this semester.</p>
                         </div>
+
                     ) : (
+                        // 🔥 Actual Data
                         <div className="space-y-3">
                             <p className="text-sm font-semibold text-muted-foreground mb-4">SELECT A SUBJECT</p>
-                            {subjects.map((subject) => (
+
+                            {list.map((subject: string) => (
                                 <Link
                                     key={subject}
                                     href={`/notes/${encodeURIComponent(course)}/${encodeURIComponent(semester)}/${encodeURIComponent(subject)}`}
@@ -97,6 +116,7 @@ export default function SemesterView({ course, semester }: SemesterViewProps) {
                     )}
                 </motion.div>
             </div>
+
             <UploadModal
                 isOpen={showUploadModal}
                 onClose={() => setShowUploadModal(false)}

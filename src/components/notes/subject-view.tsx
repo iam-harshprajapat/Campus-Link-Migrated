@@ -1,22 +1,35 @@
 "use client"
-
+import Image from "next/image"
 import { useState } from "react"
 import { useRouter } from 'next/navigation'
-import { Download, RefreshCw, ChevronLeft, File, FileText, Image, FileUp } from 'lucide-react'
-import { getFilesBySubject } from "@/lib/data/notes-data"
+import { Download, RefreshCw, ChevronLeft, File, FileUp } from 'lucide-react'
 import { Button } from "@/components/ui/button"
-import { FaFilePdf, FaFilePowerpoint, FaFileWord } from 'react-icons/fa';
+import NoteBreadcrumb from "./note-breadcrumb"
+import { motion } from 'framer-motion'
+import { appear } from "@/lib/animations"
+import UploadModal from "./upload-modal"
+import { useNotes } from "@/hooks/notes/useNotes"
+import FileSkeleton from "../skeletons/notes/fileSkeleton"
+import dayjs from 'dayjs';
+import relativeTime from "dayjs/plugin/relativeTime";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
+    SelectValue
 } from "@/components/ui/select"
-import NoteBreadcrumb from "./note-breadcrumb"
-import { motion } from 'framer-motion';
-import { appear } from "@/lib/animations"
-import UploadModal from "./upload-modal"
+import PdfIcon from "@/assets/fileIcons/PDF.svg"
+import DocxIcon from "@/assets/fileIcons/DOCX.svg"
+import PptIcon from "@/assets/fileIcons/PPT.svg"
+import XlsIcon from "@/assets/fileIcons/XLS.svg"
+import JpgIcon from "@/assets/fileIcons/JPG.svg"
+import DefaultIcon from "@/assets/fileIcons/default.svg"
+import PngIcon from "@/assets/fileIcons/PNG.svg"
+
+
 
 interface SubjectViewProps {
     course: string
@@ -28,14 +41,22 @@ type SortType = "name" | "date" | "size" | "type"
 type SortOrder = "asc" | "desc"
 
 export default function SubjectView({ course, semester, subject }: SubjectViewProps) {
+    dayjs.extend(relativeTime)
+    dayjs.extend(utc)
+    dayjs.extend(timezone)
+
     const router = useRouter()
     const [showUploadModal, setShowUploadModal] = useState(false)
+
+    // sorting
     const [sortBy, setSortBy] = useState<SortType>("date")
     const [sortOrder, setSortOrder] = useState<SortOrder>("desc")
 
-    const files = getFilesBySubject(course, semester, subject)
+    const { data: files, isLoading } = useNotes(course, semester, subject)
 
-    const sortedFiles = [...files].sort((a, b) => {
+    const list = files ?? []
+
+    const sortedFiles = [...list].sort((a, b) => {
         let comparison = 0
 
         switch (sortBy) {
@@ -56,49 +77,35 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
         return sortOrder === "asc" ? comparison : -comparison
     })
 
-    const handleRefresh = () => {
-        window.location.reload()
-    }
+    const handleRefresh = () => window.location.reload()
 
     const getFileIcon = (fileType: string) => {
         switch (fileType) {
             case "pdf":
-                return <FaFilePdf size={20} className="text-red-500" />
+                return <Image src={PdfIcon} alt="pdf" height={26} width={26} />
             case "docx":
-                return <FaFileWord size={20} className="text-blue-500" />
+                return <Image src={DocxIcon} alt="pdf" height={26} width={26} />
             case "ppt":
-                return <FaFilePowerpoint size={20} className="text-orange-500" />
+                return <Image src={PptIcon} alt="pdf" height={26} width={26} />
+            case "xlsx":
+                return <Image src={XlsIcon} alt="pdf" height={26} width={26} />
+            case "xls":
+                return <Image src={XlsIcon} alt="pdf" height={26} width={26} />
             case "jpg":
-            case "png":
+                return <Image src={JpgIcon} alt="pdf" height={26} width={26} />
             case "jpeg":
-                return <Image size={20} className="text-purple-500" />
+                return <Image src={JpgIcon} alt="pdf" height={26} width={26} />
+            case "png":
+                return <Image src={PngIcon} alt="pdf" height={26} width={26} />
             default:
-                return <File size={20} className="text-muted-foreground" />
+                return <Image src={DefaultIcon} alt="pdf" height={26} width={26} />
         }
     }
 
-    const formatFileSize = (sizeInMB: number) => {
-        if (sizeInMB < 1) return `${(sizeInMB * 1024).toFixed(0)} KB`
-        return `${sizeInMB.toFixed(1)} MB`
-    }
-
-    const getRelativeTime = (date: string) => {
-        const now = new Date()
-        const uploadDate = new Date(date)
-        const diffMs = now.getTime() - uploadDate.getTime()
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-
-        if (diffDays === 0) return "Today"
-        if (diffDays === 1) return "Yesterday"
-        if (diffDays < 7) return `${diffDays} days ago`
-        if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
-        return `${Math.floor(diffDays / 30)} months ago`
-    }
 
     return (
         <>
-            <div
-                className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col pb-16">
                 {/* Header */}
                 <div className="border-b border-border bg-card">
                     <div className="flex items-center justify-between px-6 py-4">
@@ -108,13 +115,18 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
                             </Button>
                             <h1 className="text-2xl font-bold text-foreground">{subject}</h1>
                         </div>
-                        <div className="flex items-center justify-between gap-6">
+                        <div className="flex items-center gap-6">
                             <button
                                 onClick={() => setShowUploadModal(true)}
-                                className="text-primary hover:bg-primary hover:text-white p-1 cursor-pointer rounded-sm flex items-center">
+                                className="text-primary hover:bg-primary hover:text-white p-1 rounded-sm"
+                            >
                                 <FileUp size={20} />
                             </button>
-                            <button onClick={handleRefresh} className="text-primary hover:bg-primary hover:text-white p-1 cursor-pointer rounded-sm flex items-center">
+
+                            <button
+                                onClick={handleRefresh}
+                                className="text-primary hover:bg-primary hover:text-white p-1 rounded-sm"
+                            >
                                 <RefreshCw size={20} />
                             </button>
                         </div>
@@ -129,48 +141,56 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
                             { label: subject, href: "#" },
                         ]}
                     />
-
-                    {/* Sorting Ribbon */}
-                    {sortedFiles.length > 0 && (
-                        <div className="border-t border-border px-6 py-3 flex items-center gap-3 bg-muted/30">
-                            <span className="text-sm text-muted-foreground font-medium">Sort by:</span>
-                            <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortType)}>
-                                <SelectTrigger className="w-40">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="name">Name</SelectItem>
-                                    <SelectItem value="date">Upload Date</SelectItem>
-                                    <SelectItem value="size">File Size</SelectItem>
-                                    <SelectItem value="type">File Type</SelectItem>
-                                </SelectContent>
-                            </Select>
-
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-                                className="ml-auto"
-                            >
-                                {sortOrder === "asc" ? "↑ Ascending" : "↓ Descending"}
-                            </Button>
-                        </div>
-                    )}
                 </div>
+                {/* Sorting Ribbon */}
+                {sortedFiles.length > 0 && (
+                    <div className="border-t border-border px-6 py-3 flex items-center gap-3 bg-muted/30">
+                        <span className="text-sm text-muted-foreground font-medium">Sort by:</span>
 
+                        <Select value={sortBy} onValueChange={(value) => setSortBy(value as SortType)}>
+                            <SelectTrigger className="w-40">
+                                <SelectValue placeholder="Sort by" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="name">Name</SelectItem>
+                                <SelectItem value="date">Upload Date</SelectItem>
+                                <SelectItem value="size">File Size</SelectItem>
+                                <SelectItem value="type">File Type</SelectItem>
+                            </SelectContent>
+                        </Select>
+
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
+                            className="ml-auto"
+                        >
+                            {sortOrder === "asc" ? "↑ Ascending" : "↓ Descending"}
+                        </Button>
+                    </div>
+                )}
                 {/* Content */}
-                <motion.div variants={appear}
-                    exit="exit"
-                    animate="visible"
+                <motion.div
+                    variants={appear}
                     initial="hidden"
-                    className="flex-1 overflow-y-auto p-6">
-                    {sortedFiles.length === 0 ? (
+                    animate="visible"
+                    exit="exit"
+                    className="flex-1 overflow-y-auto p-6"
+                >
+                    {isLoading ? (
+                        // 🔥 skeletons
+                        Array.from({ length: 5 }).map((_, i) => <FileSkeleton key={i} />)
+
+                    ) : sortedFiles.length === 0 ? (
+                        // 🔥 empty
                         <div className="flex flex-col items-center justify-center py-12 text-center">
                             <File size={48} className="mb-4 text-muted-foreground" />
                             <p className="text-lg font-semibold text-foreground">No Files Found</p>
                             <p className="text-sm text-muted-foreground">No files available in this subject yet.</p>
                         </div>
+
                     ) : (
+                        // 🔥 file list
                         <div className="space-y-2">
                             {sortedFiles.map((file) => (
                                 <div
@@ -178,17 +198,20 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
                                     className="flex items-center gap-4 rounded-lg border border-border bg-card p-4 hover:bg-secondary transition-all"
                                 >
                                     <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                                        {/* <FileTypeIcon type={file.fileType} size={26} /> */}
+                                        {/* <Image src={PdfIcon} alt={file.fileType} /> */}
                                         {getFileIcon(file.fileType)}
                                     </div>
 
                                     <div className="flex-1 min-w-0">
                                         <p className="font-semibold text-foreground truncate">{file.title}</p>
+
                                         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-                                            <span>{file.uploadedBy.name}</span>
+                                            <span>{file.uploadedBy?.name || "Unknown User"}</span>
                                             <span>•</span>
-                                            <span>{getRelativeTime(file.uploadedAt)}</span>
+                                            <span>{dayjs.utc(file.createdAt).tz(dayjs.tz.guess()).fromNow()}</span>
                                             <span>•</span>
-                                            <span>{formatFileSize(file.fileSize)}</span>
+                                            <span>{file.fileSize}</span>
                                         </div>
                                     </div>
 
@@ -207,7 +230,8 @@ export default function SubjectView({ course, semester, subject }: SubjectViewPr
                         </div>
                     )}
                 </motion.div>
-            </div>
+            </div >
+
             <UploadModal
                 isOpen={showUploadModal}
                 onClose={() => setShowUploadModal(false)}
