@@ -8,8 +8,12 @@ import { Button } from "@/components/ui/button"
 import NoteBreadcrumb from "./note-breadcrumb"
 import { motion } from 'framer-motion';
 import { appear } from "@/lib/animations"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import UploadModal from "./upload-modal"
+import { notesService } from "@/lib/api/notesService"
+import { useAuth } from "@/context/authContext"
+import NoteSkeleton from "../skeletons/notes/noteSkeleton"
+import { useSemesters } from "@/hooks/notes/useSemesters"
 
 interface CourseViewProps {
     course: string
@@ -17,14 +21,12 @@ interface CourseViewProps {
 
 export default function CourseView({ course }: CourseViewProps) {
     const [showUploadModal, setShowUploadModal] = useState(false)
-
     const router = useRouter()
-    const semesters = getSemestersByCourse(course)
-
+    const { data: semesters, isLoading } = useSemesters(course);
     const handleRefresh = () => {
         window.location.reload()
     }
-
+    const list: string[] = semesters ?? []
     return (
         <>
 
@@ -61,35 +63,39 @@ export default function CourseView({ course }: CourseViewProps) {
                     animate="visible"
                     initial="hidden"
                     className="flex-1 overflow-y-auto p-6">
-                    {semesters.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-12 text-center">
-                            <BookOpen size={48} className="mb-4 text-muted-foreground" />
-                            <p className="text-lg font-semibold text-foreground">No Files Found</p>
-                            <p className="text-sm text-muted-foreground">No semesters available in this course.</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-3">
-                            <p className="text-sm font-semibold text-muted-foreground mb-4">SELECT A SEMESTER</p>
-                            {semesters.map((semester) => (
-                                <Link
-                                    key={semester}
-                                    href={`/notes/${encodeURIComponent(course)}/${encodeURIComponent(semester)}`}
-                                    className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:bg-secondary hover:border-primary cursor-pointer"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                                            <BookOpen size={24} className="text-primary" />
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-foreground">{semester}</p>
-                                            <p className="text-sm text-muted-foreground">Click to view subjects</p>
-                                        </div>
-                                    </div>
-                                    <ChevronRight size={20} className="text-muted-foreground" />
-                                </Link>
-                            ))}
-                        </div>
-                    )}
+                    {
+                        isLoading ? (
+                            Array.from({ length: 4 }).map((_, i) => <NoteSkeleton key={i} />)
+                        ) :
+                            list.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center py-12 text-center">
+                                    <BookOpen size={48} className="mb-4 text-muted-foreground" />
+                                    <p className="text-lg font-semibold text-foreground">No Files Found</p>
+                                    <p className="text-sm text-muted-foreground">No semesters available in this course.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-3">
+                                    <p className="text-sm font-semibold text-muted-foreground mb-4">SELECT A SEMESTER</p>
+                                    {list.map((semester: string) => (
+                                        <Link
+                                            key={semester}
+                                            href={`/notes/${encodeURIComponent(course)}/${encodeURIComponent(semester)}`}
+                                            className="flex items-center justify-between gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:bg-secondary hover:border-primary cursor-pointer"
+                                        >
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
+                                                    <BookOpen size={24} className="text-primary" />
+                                                </div>
+                                                <div>
+                                                    <p className="font-semibold text-foreground">{semester}</p>
+                                                    <p className="text-sm text-muted-foreground">Click to view subjects</p>
+                                                </div>
+                                            </div>
+                                            <ChevronRight size={20} className="text-muted-foreground" />
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                 </motion.div>
             </div>
             <UploadModal

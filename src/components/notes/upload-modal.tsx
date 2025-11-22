@@ -10,6 +10,7 @@ import { uploadToCloudinary } from '@/utils/config/cloudinary'
 import { useLoader } from '@/context/loaderProvider'
 import { useNotification } from '../shared/notification/notificationProvider'
 import { formatBytes } from '@/utils/helpers/formatBytes'
+import { uploadNote } from '@/lib/api'
 
 interface UploadModalProps {
     isOpen: boolean
@@ -231,16 +232,20 @@ export default function UploadModal({
             console.log("Final payload:", payload);
 
             // Send to server
-            // await fetch("/api/notes", {
-            //   method: "POST",
-            //   body: JSON.stringify(payload),
-            //   headers: { "Content-Type": "application/json" },
-            // });
+            const response = await uploadNote(payload);
+
+            if (response.ok && response.success) {
+                console.log("Note uploaded:", response);
+            } else {
+                console.error("Upload failed:", response);
+            }
+
 
             showNotification("Notes uploaded successfully!", "success");
             hideLoader();
             handleActualClose();
         } catch (err: any) {
+            console.log(err);
             hideLoader();
             showNotification(err?.message || "Upload failed", "error");
         }
