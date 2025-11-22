@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/authContext";
 import NotificationProvider from "@/components/shared/notification/notificationProvider";
 import BottomNav from "@/components/layout/bottom-nav";
 import { LoaderProvider } from "@/context/loaderProvider";
+import QueryProvider from "@/context/queryProvider";
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' })
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-mono' })
@@ -24,7 +25,11 @@ export default function RootLayout({
       <body className={`${geist.variable} ${geistMono.variable} font-sans`}>
         <NotificationProvider>
           <LoaderProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <QueryProvider>
+                {children}
+              </QueryProvider>
+            </AuthProvider>
           </LoaderProvider>
         </NotificationProvider>
       </body>
